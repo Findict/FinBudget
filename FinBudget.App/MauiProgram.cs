@@ -5,6 +5,7 @@ using FinBudget.Repository.Processors;
 using FinBudget.Repository.Processors.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using SkiaSharp.Views.Maui.Controls.Hosting;
 
 namespace FinBudget.App
 {
@@ -18,10 +19,12 @@ namespace FinBudget.App
             var builder = MauiApp.CreateBuilder();
             builder
                 .UseMauiApp<App>()
+                .UseSkiaSharp()
                 .ConfigureFonts(fonts =>
                 {
                     fonts.AddFont("OpenSans-Regular.ttf", "OpenSansRegular");
                     fonts.AddFont("OpenSans-Semibold.ttf", "OpenSansSemibold");
+                    fonts.AddFont("FontAwesome.otf", "FontAwesome");
                 })
                 .RegisterServices()
                 .RegisterViewModels()

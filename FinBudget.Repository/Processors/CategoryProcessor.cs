@@ -1,5 +1,7 @@
-﻿using FinBudget.Repository.Database;
+﻿using System.Text.RegularExpressions;
+using FinBudget.Repository.Database;
 using FinBudget.Repository.Exceptions;
+using FinBudget.Repository.Models;
 using FinBudget.Repository.Models.Create;
 using FinBudget.Repository.Models.Edit;
 using FinBudget.Repository.Models.Output;
@@ -31,12 +33,26 @@ namespace FinBudget.Repository.Processors
 
         public async Task<List<Category>> GetCategories()
         {
-            return await _dbContext.Categories.Select(x => new Category { Name = x.Name }).ToListAsync();
+            return await _dbContext.Categories.Select(x => new Category { Name = x.Name, ColorCode = x.ColorCode}).ToListAsync();
         }
 
-        public async Task<bool> AddCategory(CreateCategoryModel model)
+        public async Task<ObjectResult<Category>> AddCategory(CreateCategoryModel model)
         {
-            _dbContext.Categories.Add(new DbCategory
+            var result = new ObjectResult<Category>();
+
+            if (string.IsNullOrWhiteSpace(model.Name)) 
+            {
+                result.ErrorMessages.Add("Categories must have a name");
+            }
+
+            if (!string.IsNullOrWhiteSpace(model.ColorCode) && !Regex.IsMatch(model.ColorCode, "^#[0-9a-fA-F]{6}$"))
+            {
+                result.ErrorMessages.Add("Category color is invalid");
+            }
+
+            if (result.ErrorMessages.Count > 0) return result;
+
+            var newItem = _dbContext.Categories.Add(new DbCategory
             {
                 Name = model.Name,
                 ColorCode = model.ColorCode
@@ -44,11 +60,27 @@ namespace FinBudget.Repository.Processors
 
             var changes = await _dbContext.SaveChangesAsync();
 
-            return changes > 0;
+            result.Success = changes > 0;
+
+            if (result.Success)
+            {
+                result.Result = CategoryFromDbObject(newItem.Entity);
+            }
+
+            return result;
         }
 
-        public async Task<bool> UpdateCategory(EditCategoryModel model)
+        public async Task<ObjectResult<Category>> UpdateCategory(EditCategoryModel model)
         {
+            var result = new ObjectResult<Category>();
+
+            if (!string.IsNullOrWhiteSpace(model.ColorCode) && !Regex.IsMatch(model.ColorCode, "^#[0-9a-fA-F]{6}$"))
+            {
+                result.ErrorMessages.Add("Category colour is invalid");
+            }
+
+            if (result.ErrorMessages.Count > 0) return result;
+
             var existing = await _dbContext.Categories.FindAsync(model.Id);
 
             if (existing == null)
@@ -63,7 +95,21 @@ namespace FinBudget.Repository.Processors
 
             var changes = await _dbContext.SaveChangesAsync();
 
-            return changes > 0;
+            result.Success = changes > 0;
+
+            if (result.Success)
+            {
+                result.Result = CategoryFromDbObject(existing);
+            }
+
+            return result;
         }
+
+        private Category CategoryFromDbObject(DbCategory dbResult) => new Category
+        {
+            Id = dbResult.Id,
+            Name = dbResult.Name,
+            ColorCode = dbResult.ColorCode
+        };
     }
 }

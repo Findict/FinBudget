@@ -2,7 +2,7 @@
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:local="clr-namespace:FinBudget.App.ViewModels"
-             xmlns:picker="https://trungnt2910.github.io/schemas/maui/2022/colorpicker"
+             xmlns:picker="clr-namespace:Maui.ColorPicker;assembly=Maui.ColorPicker"
              x:Class="FinBudget.App.Pages.MainPage">
 
     <ScrollView>
@@ -16,27 +16,66 @@
                 SemanticProperties.HeadingLevel="Level1" />
 
             <Editor
-                Text="{Binding CategoryInput}" />
+                Text="{Binding CategoryInput}"
+                VerticalTextAlignment="Center"/>
 
-            <picker:ColorPicker />
+            <picker:ColorPicker
+                PropertyChanged="ColorPicker_PropertyChanged"
+                PickedColor="{Binding CategoryColor}"
+                HeightRequest="200"
+                WidthRequest="200"/>
 
             <Button
                 Text="Submit" 
                 Command="{Binding OnSubmitClicked}"
                 HorizontalOptions="Fill" />
 
-            <CollectionView 
+            <CollectionView
+                PropertyChanged="CollectionView_PropertyChanged"
                 ItemsSource="{Binding Categories}">
+                <CollectionView.ItemsLayout>
+                    <GridItemsLayout 
+                        Orientation="Vertical"
+                        Span="2" 
+                        VerticalItemSpacing="4"/>
+                </CollectionView.ItemsLayout>
                 <CollectionView.ItemTemplate>
                     <DataTemplate>
                         <Grid>
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="*"/>
-                                <ColumnDefinition Width="60"/>
-                            </Grid.ColumnDefinitions>
-                            
-                            <Label Text="{Binding Name}" />
-                            <Label Text="{Binding ColorCode}" />
+                            <Border
+                                Background="{Binding Color}"
+                                WidthRequest="192"
+                                HeightRequest="24"
+                                StrokeThickness="0"
+                                Padding="6,0"
+                                StrokeShape="RoundRectangle 12">
+                                
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="12"/>
+                                        <ColumnDefinition Width="*"/>
+                                    </Grid.ColumnDefinitions>
+
+                                    <Image
+                                        VerticalOptions="Center">
+                                        <Image.Source>
+                                            <FontImageSource
+                                                FontFamily="FontAwesome"
+                                                Glyph="{StaticResource User}"
+                                                Size="12"/>
+                                        </Image.Source>
+                                    </Image>
+
+                                    <Label 
+                                        Margin="6,0,0,0"
+                                        Grid.Column="1"
+                                        VerticalTextAlignment="Center"
+                                        HorizontalTextAlignment="Center"
+                                        FontAttributes="Bold"
+                                        Text="{Binding Name}"
+                                        LineBreakMode="NoWrap"/>
+                                </Grid>
+                            </Border>
                         </Grid>
                     </DataTemplate>
                 </CollectionView.ItemTemplate>

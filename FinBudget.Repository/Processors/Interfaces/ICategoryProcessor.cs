@@ -1,4 +1,5 @@
-﻿using FinBudget.Repository.Models.Create;
+﻿using FinBudget.Repository.Models;
+using FinBudget.Repository.Models.Create;
 using FinBudget.Repository.Models.Edit;
 using FinBudget.Repository.Models.Output;
 
@@ -10,8 +11,8 @@ namespace FinBudget.Repository.Processors.Interfaces
 
         Task<List<Category>> GetCategories();
 
-        Task<bool> AddCategory(CreateCategoryModel model);
+        Task<ObjectResult<Category>> AddCategory(CreateCategoryModel model);
 
-        Task<bool> UpdateCategory(EditCategoryModel model);
+        Task<ObjectResult<Category>> UpdateCategory(EditCategoryModel model);
     }
 }

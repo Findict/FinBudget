@@ -3,7 +3,6 @@ using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Windows.Input;
 using FinBudget.Repository.Models.Create;
-using FinBudget.Repository.Models.Output;
 using FinBudget.Repository.Processors.Interfaces;
 
 namespace FinBudget.App.ViewModels
@@ -18,7 +17,9 @@ namespace FinBudget.App.ViewModels
 
         public string CategoryInput { get; set; }
 
-        public ObservableCollection<Category> Categories { get; set; } = new();
+        public Color CategoryColor { get; set; }
+
+        public ObservableCollection<CategoryViewModel> Categories { get; set; } = new();
 
         public MainPageViewModel(ICategoryProcessor categoryProcessor)
         {
@@ -33,7 +34,7 @@ namespace FinBudget.App.ViewModels
 
             foreach (var category in categories)
             {
-                Categories.Add(category);
+                Categories.Add(new CategoryViewModel(category));
             }
 
             OnPropertyChanged(nameof(Categories));
@@ -41,11 +42,15 @@ namespace FinBudget.App.ViewModels
 
         private async Task SubmitNewCategory()
         {
-            var result = await _categoryProcessor.AddCategory(new CreateCategoryModel { Name = CategoryInput });
+            var result = await _categoryProcessor.AddCategory(new CreateCategoryModel 
+            { 
+                Name = CategoryInput,
+                ColorCode = CategoryColor.ToHex()
+            });
 
-            if (result)
+            if (result.Success && result.Result != null)
             {
-                Categories.Add(new Category { Name = CategoryInput });
+                Categories.Add(new CategoryViewModel(result.Result));
                 CategoryInput = string.Empty;
 
                 OnPropertyChanged(nameof(CategoryInput));
@@ -53,7 +58,15 @@ namespace FinBudget.App.ViewModels
             }
         }
 
+        internal void UpdateCategoryColor(Color pickedColor)
+        {
+            CategoryColor = pickedColor;
+
+            OnPropertyChanged(nameof(CategoryColor));
+        }
+
         private void OnPropertyChanged([CallerMemberName] string name = "") =>
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
+
     }
 }
