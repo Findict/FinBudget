@@ -3,7 +3,7 @@
 namespace FinBudget.Repository.Database
 {
     [PrimaryKey("Id")]
-    internal class DbAccounts
+    internal class DbAccount
     {
         public int Id { get; set; }
 

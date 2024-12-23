@@ -1,11 +1,13 @@
 ﻿using FinBudget.Repository.Database;
+using FinBudget.Repository.Exceptions;
 using FinBudget.Repository.Models.Create;
 using FinBudget.Repository.Models.Output;
 using FinBudget.Repository.Processors.Interfaces;
+using Microsoft.EntityFrameworkCore;
 
 namespace FinBudget.Repository.Processors
 {
-    internal class AccountProcessor : IAccountProcessor
+    public class AccountProcessor : IAccountProcessor
     {
         private BudgetDbContext _dbContext;
 
@@ -14,24 +16,53 @@ namespace FinBudget.Repository.Processors
             _dbContext = dbContext;
         }
 
-        public Task<bool> AddAccount(CreateAccountModel model)
+        public async Task<Account?> GetAccount(int id)
         {
-            throw new NotImplementedException();
+            var dbResult = await _dbContext.Accounts.FirstOrDefaultAsync(x => x.Id == id);
+
+            if (dbResult == null) return null;
+
+            return AccountFromDbObject(dbResult);
         }
 
-        public Task<Account?> GetAccount(int id)
+        public async Task<List<Account>> GetAccounts()
         {
-            throw new NotImplementedException();
+            return await _dbContext.Accounts.Select(x => AccountFromDbObject(x)).ToListAsync();
         }
 
-        public Task<List<Account>> GetAccounts()
+        public async Task<bool> AddAccount(CreateAccountModel model)
         {
-            throw new NotImplementedException();
+            var newAccount = new DbAccount { Name = model.Name };
+
+            _dbContext.Accounts.Add(newAccount);
+
+            var changes = await _dbContext.SaveChangesAsync();
+
+            return changes > 0;
         }
 
-        public Task<bool> UpdateAccount(EditAccountModel model)
+        public async Task<bool> UpdateAccount(EditAccountModel model)
         {
-            throw new NotImplementedException();
+            var existing = await _dbContext.Accounts.FindAsync(model.Id);
+
+            if (existing == null)
+            {
+                if (string.IsNullOrWhiteSpace(model.Name)) throw new InvalidEditModelException($"Account with id {model.Id} was not found, and no new account could be created as the name was null.");
+
+                return await AddAccount(new() { Name = model.Name });
+            }
+
+            if (model.Name != null) existing.Name = model.Name;
+
+            var changes = await _dbContext.SaveChangesAsync();
+
+            return changes > 0;
         }
+
+        private Account AccountFromDbObject(DbAccount dbResult) => new Account
+        {
+            Id = dbResult.Id,
+            Name = dbResult.Name,
+        };
     }
 }

@@ -2,5 +2,6 @@
 {
     public class CreateAccountModel
     {
+        public required string Name { get; init; }
     }
 }

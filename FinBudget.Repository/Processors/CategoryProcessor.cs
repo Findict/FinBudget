@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace FinBudget.Repository.Processors
 {
-    internal class CategoryProcessor : ICategoryProcessor
+    public class CategoryProcessor : ICategoryProcessor
     {
         private BudgetDbContext _dbContext;
 

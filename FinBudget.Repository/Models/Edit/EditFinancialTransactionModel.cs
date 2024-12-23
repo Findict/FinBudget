@@ -1,8 +1,9 @@
-﻿
-namespace FinBudget.Repository.Models.Create
+﻿namespace FinBudget.Repository.Models.Edit
 {
-    public class CreateFinancialTransactionModel
+    public class EditFinancialTransactionModel
     {
+        public required int Id { get; init; }
+
         public string? Description { get; init; }
 
         public DateTime? Date { get; init; }
@@ -14,10 +15,10 @@ namespace FinBudget.Repository.Models.Create
         public int? ToId { get; init; }
 
         public bool IsEmpty
-            => Description == null && 
-               Date == null && 
-               Amount == null && 
-               FromId == null && 
+            => Description == null &&
+               Date == null &&
+               Amount == null &&
+               FromId == null &&
                ToId == null;
     }
 }
