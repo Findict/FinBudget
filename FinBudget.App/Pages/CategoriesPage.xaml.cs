@@ -1,14 +1,13 @@
 ﻿using FinBudget.App.ViewModels;
 using Maui.ColorPicker;
-using Microsoft.Maui.Controls;
 
 namespace FinBudget.App.Pages
 {
-    public partial class MainPage : ContentPage
+    public partial class CategoriesPage : ContentPage
     {
         int count = 0;
 
-        public MainPage(MainPageViewModel viewModel)
+        public CategoriesPage(CategoriesPageViewModel viewModel)
         {
             InitializeComponent();
 
@@ -19,7 +18,7 @@ namespace FinBudget.App.Pages
 
         private void ColorPicker_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
-            if (sender is ColorPicker picker && e.PropertyName == nameof(picker.PickedColor) && BindingContext is MainPageViewModel vm)
+            if (sender is ColorPicker picker && e.PropertyName == nameof(picker.PickedColor) && BindingContext is CategoriesPageViewModel vm)
             {
                 vm.UpdateCategoryColor(picker.PickedColor);
             }

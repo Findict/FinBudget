@@ -7,15 +7,18 @@ using FinBudget.Repository.Models.Edit;
 using FinBudget.Repository.Models.Output;
 using FinBudget.Repository.Processors.Interfaces;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Caching.Memory;
 
 namespace FinBudget.Repository.Processors
 {
     public class CategoryProcessor : ICategoryProcessor
     {
+        private IMemoryCache _cache;
         private BudgetDbContext _dbContext;
 
         public CategoryProcessor(BudgetDbContext dbContext)
         {
+            _cache = new MemoryCache(new MemoryCacheOptions());
             _dbContext = dbContext;
         }
 
@@ -33,6 +36,21 @@ namespace FinBudget.Repository.Processors
 
         public async Task<List<Category>> GetCategories()
         {
+            if (_cache != null && _cache.TryGetValue("categories_all", out List<Category>? cacheValue) && cacheValue != null)
+            {
+                return cacheValue;
+            }
+
+            var dbResults = await _dbContext.Categories.Select(x => new Category { Name = x.Name, ColorCode = x.ColorCode }).ToListAsync();
+
+            if (_cache != null)
+            {
+                var entry = _cache.CreateEntry("categories_all");
+
+                entry.SetAbsoluteExpiration(TimeSpan.FromMinutes(5));
+                entry.SetValue(dbResults);
+            }
+
             return await _dbContext.Categories.Select(x => new Category { Name = x.Name, ColorCode = x.ColorCode}).ToListAsync();
         }
 

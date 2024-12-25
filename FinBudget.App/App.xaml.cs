@@ -1,5 +1,4 @@
-﻿using FinBudget.App.Pages;
-using FinBudget.Repository.Database;
+﻿using FinBudget.Repository.Database;
 using Microsoft.EntityFrameworkCore;
 
 namespace FinBudget.App

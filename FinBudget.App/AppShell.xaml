@@ -7,9 +7,21 @@
     Shell.FlyoutBehavior="Disabled"
     Title="FinBudget.App">
 
-    <ShellContent
-        Title="Home"
-        ContentTemplate="{DataTemplate local:MainPage}"
-        Route="MainPage" />
+    <FlyoutItem>
+        <ShellContent
+            Title="Accounts"
+            ContentTemplate="{DataTemplate local:AccountsPage}"
+            Route="AccountsPage" />
+        
+        <ShellContent
+            Title="Categories"
+            ContentTemplate="{DataTemplate local:CategoriesPage}"
+            Route="CategoriesPage" />
+
+        <ShellContent
+            Title="Transactions"
+            ContentTemplate="{DataTemplate local:TransactionsPage}"
+            Route="TransactionsPage" />
+    </FlyoutItem>
 
 </Shell>

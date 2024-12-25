@@ -52,14 +52,14 @@ namespace FinBudget.App
 
         private static MauiAppBuilder RegisterViewModels(this MauiAppBuilder builder)
         {
-            builder.Services.AddScoped<MainPageViewModel>();
+            builder.Services.AddScoped<CategoriesPageViewModel>();
 
             return builder;
         }
 
         private static MauiAppBuilder RegisterViews(this MauiAppBuilder builder)
         {
-            builder.Services.AddScoped<MainPage>();
+            builder.Services.AddScoped<CategoriesPage>();
 
             return builder;
         }

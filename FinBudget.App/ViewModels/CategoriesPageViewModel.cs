@@ -7,7 +7,7 @@ using FinBudget.Repository.Processors.Interfaces;
 
 namespace FinBudget.App.ViewModels
 {
-    public class MainPageViewModel : INotifyPropertyChanged
+    public class CategoriesPageViewModel : INotifyPropertyChanged
     {
         private readonly ICategoryProcessor _categoryProcessor;
 
@@ -21,7 +21,7 @@ namespace FinBudget.App.ViewModels
 
         public ObservableCollection<CategoryViewModel> Categories { get; set; } = new();
 
-        public MainPageViewModel(ICategoryProcessor categoryProcessor)
+        public CategoriesPageViewModel(ICategoryProcessor categoryProcessor)
         {
             OnSubmitClicked = new Command(async () => await SubmitNewCategory());
 
@@ -30,7 +30,9 @@ namespace FinBudget.App.ViewModels
 
         internal async Task OnInitializedAsync()
         {
-            var categories = await _categoryProcessor.GetCategories();
+            var categories = await _categoryProcessor.GetCategories().ConfigureAwait(false);
+
+            Categories.Clear();
 
             foreach (var category in categories)
             {

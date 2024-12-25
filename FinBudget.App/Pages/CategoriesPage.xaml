@@ -3,7 +3,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:local="clr-namespace:FinBudget.App.ViewModels"
              xmlns:picker="clr-namespace:Maui.ColorPicker;assembly=Maui.ColorPicker"
-             x:Class="FinBudget.App.Pages.MainPage">
+             x:Class="FinBudget.App.Pages.CategoriesPage">
 
     <ScrollView>
         <VerticalStackLayout
